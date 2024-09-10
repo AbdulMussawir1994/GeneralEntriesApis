@@ -42,9 +42,4 @@
     <PackageReference Include="System.Security.Claims" Version="4.3.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="DTOs\" />
-    <Folder Include="RepositoryLayer\" />
-  </ItemGroup>
-
 </Project>
