@@ -4,6 +4,9 @@ namespace GeneralEntries.DTOs;
 
 public class CreateEmployeeDto
 {
+
+    public int EmployeeId { get; set; }  // Required to identify the employee
+
     [StringLength(50, MinimumLength = 6, ErrorMessage = "Employee name must be at least 6 characters long.")]
     public required string EmployeeName { get; set; }
 

@@ -63,7 +63,7 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ServiceResponse<GetEmployeeDto>>> UpdateEmployee(UpdateEmployeeDto model)
+        public async Task<ActionResult<ServiceResponse<GetEmployeeDto>>> UpdateEmployee([FromBody] CreateEmployeeDto model)
         {
             if (!ModelState.IsValid)
             {

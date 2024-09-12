@@ -10,5 +10,5 @@ public interface IEmployeeLayer
     Task<ServiceResponse<GetEmployeeDto>> GetIdByAsync(int Id);
     Task<ServiceResponse<IEnumerable<GetEmployeeDto>>> GetListAsync();
     Task<ServiceResponse<GetEmployeeDto>> PatchEmployeeAsync(int Id, string empName);
-    Task<ServiceResponse<GetEmployeeDto>> UpdateEmployeeAsync(UpdateEmployeeDto model);
+    Task<ServiceResponse<GetEmployeeDto>> UpdateEmployeeAsync(CreateEmployeeDto model);
 }

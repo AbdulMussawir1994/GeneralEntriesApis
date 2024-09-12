@@ -32,7 +32,6 @@ public class MapsterProfile : TypeAdapterConfig
 
         TypeAdapterConfig<CreateEmployeeDto, Employee>.NewConfig();
         TypeAdapterConfig<CreateEmployeeDto, GetEmployeeDto>.NewConfig();
-        TypeAdapterConfig<UpdateEmployeeDto, GetEmployeeDto>.NewConfig();
 
 
     }

@@ -84,7 +84,7 @@ public class EmployeeLayer : IEmployeeLayer
         return serviceResponse;
     }
 
-    public async Task<ServiceResponse<GetEmployeeDto>> UpdateEmployeeAsync(UpdateEmployeeDto model)
+    public async Task<ServiceResponse<GetEmployeeDto>> UpdateEmployeeAsync(CreateEmployeeDto model)
     {
         var serviceResponse = new ServiceResponse<GetEmployeeDto>();
 
