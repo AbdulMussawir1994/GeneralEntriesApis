@@ -15,6 +15,7 @@ using GeneralEntries.Helpers.Data_Structure;
 using System.Threading.RateLimiting;
 using GeneralEntries.RepositoryLayer.InterfaceClass;
 using GeneralEntries.RepositoryLayer.ServiceClass;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,11 +74,19 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<IAuthLayer, AuthLayer>();
+builder.Services.AddScoped<IEmployeeLayer, EmployeeLayer>();
 
 builder.Services.AddTransient<GlobalExceptionHandler>();
 
 TypeAdapterConfig.GlobalSettings.Scan(Assembly.GetExecutingAssembly());
 builder.Services.AddSingleton(new MapsterProfile());
+
+builder.Services.AddApiVersioning(o =>
+{
+    o.AssumeDefaultVersionWhenUnspecified = false;
+    o.ApiVersionReader = new UrlSegmentApiVersionReader();
+    o.ReportApiVersions = true;
+});
 
 builder.Services.AddCors(cors => cors.AddPolicy("AllowApi", builder =>
 {

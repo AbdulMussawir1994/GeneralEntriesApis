@@ -9,7 +9,6 @@ public class Employee
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     public int EmployeeId { get; set; }
-
     public string EmployeeName { get; set; } = string.Empty;
     public int Age { get; set; }
     public decimal Salary { get; set; }
