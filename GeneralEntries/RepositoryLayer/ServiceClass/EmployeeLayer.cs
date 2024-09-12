@@ -1,11 +1,9 @@
-﻿using Castle.Components.DictionaryAdapter.Xml;
-using GeneralEntries.ContextClass;
+﻿using GeneralEntries.ContextClass;
 using GeneralEntries.DTOs;
 using GeneralEntries.Helpers.Response;
 using GeneralEntries.Models;
 using GeneralEntries.RepositoryLayer.InterfaceClass;
 using Mapster;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 
@@ -31,9 +29,16 @@ public class EmployeeLayer : IEmployeeLayer
         {
             var result = await _dbContextClass.Employees.Include(x=>x.ApplicationUser).IgnoreQueryFilters().AsNoTracking().AsQueryable().ToListAsync();
 
-            serviceResponse.Value = result.Adapt<IEnumerable<GetEmployeeDto>>();
+            if(result.Count > 0)
+            {
+                serviceResponse.Value = result.Adapt<IEnumerable<GetEmployeeDto>>();
+                serviceResponse.Status = true;
+                serviceResponse.Message = "Fetched all employee records successfully.";
+            }
+
             serviceResponse.Status = true;
-            serviceResponse.Message = "Fetched all employee records successfully.";
+            serviceResponse.Message = "No any employee record.";
+
         }
         catch (Exception ex)
         {

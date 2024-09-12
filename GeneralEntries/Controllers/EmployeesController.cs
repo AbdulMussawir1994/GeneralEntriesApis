@@ -1,12 +1,7 @@
-﻿using Azure;
-using GeneralEntries.DTOs;
+﻿using GeneralEntries.DTOs;
 using GeneralEntries.Helpers.Response;
-using GeneralEntries.Models;
 using GeneralEntries.RepositoryLayer.InterfaceClass;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
-using System.CodeDom;
 
 namespace GeneralEntries.Controllers
 {
@@ -53,7 +48,7 @@ namespace GeneralEntries.Controllers
 
             if (!response.Status)
             {
-                return BadRequest(response);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
 
             return Ok(response);
@@ -74,7 +69,7 @@ namespace GeneralEntries.Controllers
 
             if (!response.Status)
             {
-                return BadRequest(response);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
 
             return Ok(response);
@@ -96,7 +91,7 @@ namespace GeneralEntries.Controllers
 
             if (!response.Status)
             {
-                return NotFound(response);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
 
             return Ok(response);
@@ -118,7 +113,7 @@ namespace GeneralEntries.Controllers
 
             if (!response.Status)
             {
-                return NotFound(response);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
 
             return Ok(response);
@@ -144,7 +139,7 @@ namespace GeneralEntries.Controllers
             var response = await _employeeLayer.PatchEmployeeAsync(Id, empName);
             if (!response.Status)
             {
-                return NotFound(response);
+                return StatusCode(StatusCodes.Status500InternalServerError, response);
             }
 
             return Ok(response);
