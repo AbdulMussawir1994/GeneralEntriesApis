@@ -21,30 +21,51 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ServiceResponse<IEnumerable<GetEmployeeDto>>>> GetEmployees()
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<GetEmployeeDto>>> GetEmployees(CancellationToken cancellationToken)
         {
-            var result = await _employeeLayer.GetListAsync();
-
-            if (!result.Status)
+            try
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, result);
-            }
+                //  await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
 
-            return Ok(result);
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    Console.WriteLine("Cancelled");
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Request was canceled.");
+                }
+
+                var result = await _employeeLayer.GetListAsync(cancellationToken);
+
+                if (!result.Status)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, result);
+                }
+                return Ok(result);
+
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine("Cancelled");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Request was canceled.");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred: {ex.Message}");
+            }
         }
 
-        [HttpPost(template: "Add")]
+        [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ServiceResponse<GetEmployeeDto>>> AddEmployee([FromBody] CreateEmployeeDto model)
+        public async Task<ActionResult<GetEmployeeDto>> AddEmployee([FromBody] CreateEmployeeDto model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _employeeLayer.AddNewEmployeeAsync(model);
+            var response = await _employeeLayer.AddNewEmployeeAsync(model, cancellationToken);
 
             if (!response.Status)
             {
@@ -54,18 +75,18 @@ namespace GeneralEntries.Controllers
             return Ok(response);
         }
 
-        [HttpPut(template: "Update")]
+        [HttpPut("Update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ServiceResponse<GetEmployeeDto>>> UpdateEmployee([FromBody] CreateEmployeeDto model)
+        public async Task<ActionResult<GetEmployeeDto>> UpdateEmployee([FromBody] CreateEmployeeDto model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var response = await _employeeLayer.UpdateEmployeeAsync(model);
+            var response = await _employeeLayer.UpdateEmployeeAsync(model, cancellationToken);
 
             if (!response.Status)
             {
@@ -75,19 +96,19 @@ namespace GeneralEntries.Controllers
             return Ok(response);
         }
 
-        [HttpGet(template: "GetId/{Id}")]
+        [HttpGet("GetId/{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ServiceResponse<GetEmployeeDto>>> GetEmployeeByIdAsync(int Id)
+        public async Task<ActionResult<GetEmployeeDto>> GetEmployeeByIdAsync(int Id, CancellationToken cancellationToken)
         {
             if (Id <= 0)
             {
                 return BadRequest(ApiMessages.InvalidInput);
             }
 
-            var response = await _employeeLayer.GetIdByAsync(Id);
+            var response = await _employeeLayer.GetIdByAsync(Id, cancellationToken);
 
             if (!response.Status)
             {
@@ -102,14 +123,14 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<ServiceResponse<bool>>> DeleteStudentAsync(int id)
+        public async Task<ActionResult<bool>> DeleteStudentAsync(int id, CancellationToken cancellationToken)
         {
             if (id <= 0)
             {
                 return BadRequest(ApiMessages.InvalidInput);
             }
 
-            var response = await _employeeLayer.DeleteByIdAsync(id);
+            var response = await _employeeLayer.DeleteByIdAsync(id, cancellationToken);
 
             if (!response.Status)
             {
@@ -119,24 +140,19 @@ namespace GeneralEntries.Controllers
             return Ok(response);
         }
 
-        /// <summary>
-        /// Update only Employee Name by Id
-        /// </summary>
-        /// <param name="empName"></param>
-        /// <param name="Id"></param>
         [HttpPatch("PatchEmployee/{Id:int}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<ServiceResponse<GetEmployeeDto>>> PatchEmployeeAsync(int Id, string empName)
+        public async Task<ActionResult<GetEmployeeDto>> PatchEmployeeAsync(int Id, string empName, CancellationToken cancellationToken)
         {
             if (Id <= 0 || empName is null)
             {
                 return BadRequest(ApiMessages.InvalidInput);
             }
 
-            var response = await _employeeLayer.PatchEmployeeAsync(Id, empName);
+            var response = await _employeeLayer.PatchEmployeeAsync(Id, empName, cancellationToken);
             if (!response.Status)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, response);

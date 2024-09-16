@@ -22,136 +22,28 @@ public class EmployeeLayer : IEmployeeLayer
         _dbContextClass = dbContextClass;
     }
 
-    public async Task<ServiceResponse<IEnumerable<GetEmployeeDto>>> GetListAsync()
+    public async Task<ServiceResponse<IEnumerable<GetEmployeeDto>>> GetListAsync(CancellationToken cancellationToken)
     {
         var serviceResponse = new ServiceResponse<IEnumerable<GetEmployeeDto>>();
         try
         {
-            var result = await _dbContextClass.Employees.Include(x=>x.ApplicationUser).IgnoreQueryFilters().AsNoTracking().AsQueryable().ToListAsync();
+            var result = await _dbContextClass.Employees
+                                              .Include(x => x.ApplicationUser)
+                                              .IgnoreQueryFilters()
+                                              .AsNoTracking()
+                                              .ToListAsync(cancellationToken);
 
-            if(result.Count > 0)
+            if (result.Any())
             {
                 serviceResponse.Value = result.Adapt<IEnumerable<GetEmployeeDto>>();
                 serviceResponse.Status = true;
                 serviceResponse.Message = "Fetched all employee records successfully.";
             }
-
-            serviceResponse.Status = true;
-            serviceResponse.Message = "No any employee record.";
-
-        }
-        catch (Exception ex)
-        {
-            serviceResponse.Status = false;
-            serviceResponse.Message = ex.Message;
-        }
-        return serviceResponse;
-    }
-
-    public async Task<ServiceResponse<GetEmployeeDto>> AddNewEmployeeAsync(CreateEmployeeDto model)
-    {
-        var serviceResponse = new ServiceResponse<GetEmployeeDto>();
-
-        try
-        {
-            //var passMessage = CheckNameStrength(model.EmployeeName);
-
-            //if (!string.IsNullOrEmpty(passMessage))
-            //{
-            //    serviceResponse.Message = passMessage;
-            //    serviceResponse.Status = false;
-            //    return serviceResponse;
-            //}
-
-            var newEmployee = model.Adapt<Employee>(); // Assuming Mapster or other mapper
-
-            _dbContextClass.Employees.Add(newEmployee);
-
-            var result = await _dbContextClass.SaveChangesAsync();
-
-            if (result > 0)
+            else
             {
                 serviceResponse.Status = true;
-                serviceResponse.Message = "Employee added successfully.";
-                serviceResponse.Value = newEmployee.Adapt<GetEmployeeDto>();
-                return serviceResponse;
+                serviceResponse.Message = "No employee records found.";
             }
-
-            serviceResponse.Status = false;
-            serviceResponse.Message = "Failed to add new employee to the database.";
-            return serviceResponse;
-        }
-        catch (Exception ex)
-        {
-            serviceResponse.Status = false;
-            serviceResponse.Message = ex.InnerException.Message;
-        }
-        return serviceResponse;
-    }
-
-    public async Task<ServiceResponse<GetEmployeeDto>> UpdateEmployeeAsync(CreateEmployeeDto model)
-    {
-        var serviceResponse = new ServiceResponse<GetEmployeeDto>();
-
-        try
-        {
-            // Find the employee in the database
-            var emp = await _dbContextClass.Employees.Include(x=> x.ApplicationUser)
-                                           .FirstOrDefaultAsync(c => c.EmployeeId == model.EmployeeId);
-
-            if (emp is null)
-            {
-                serviceResponse.Status = false;
-                serviceResponse.Message = "Employee not found.";
-                return serviceResponse;
-            }
-
-            // Update entity properties directly
-            emp.EmployeeName = model.EmployeeName;
-            emp.Salary = model.Salary;
-            emp.Age = model.Age;
-            emp.ApplicationUserId = model.ApplicationUserId;
-
-            await _dbContextClass.SaveChangesAsync();
-
-            //// Reload the entity from the database to get the latest values
-            //await _dbContextClass.Entry(emp).ReloadAsync();
-
-            serviceResponse.Status = true;
-            serviceResponse.Message = "Employee updated successfully.";
-            serviceResponse.Value = emp.Adapt<GetEmployeeDto>();
-        }
-        catch (Exception ex)
-        {
-            serviceResponse.Status = false;
-            serviceResponse.Message = ex.InnerException.Message;
-        }
-
-        return serviceResponse;
-    }
-
-    public async Task<ServiceResponse<GetEmployeeDto>> GetIdByAsync(int Id)
-    {
-        var serviceResponse = new ServiceResponse<GetEmployeeDto>();
-
-        try
-        {
-            // Fetch employee data including related ApplicationUser
-            var emp = await _dbContextClass.Employees
-                                           .Include(x => x.ApplicationUser)
-                                           .AsNoTracking()
-                                           .SingleOrDefaultAsync(x => x.EmployeeId == Id);  // Unique employee Id ensures single record
-
-            if (emp == null)
-            {
-                serviceResponse.Status = false;
-                serviceResponse.Message = "Employee not found.";
-                return serviceResponse;
-            }
-
-            serviceResponse.Value = emp.Adapt<GetEmployeeDto>();
-            serviceResponse.Status = true;
-            serviceResponse.Message = "Fetched Successfully.";
         }
         catch (Exception ex)
         {
@@ -162,13 +54,48 @@ public class EmployeeLayer : IEmployeeLayer
         return serviceResponse;
     }
 
-    public async Task<ServiceResponse<bool>> DeleteByIdAsync(int id)
+    public async Task<ServiceResponse<GetEmployeeDto>> AddNewEmployeeAsync(CreateEmployeeDto model, CancellationToken cancellationToken)
     {
-        var serviceResponse = new ServiceResponse<bool>();
+        var serviceResponse = new ServiceResponse<GetEmployeeDto>();
 
         try
         {
-            var emp = await _dbContextClass.Employees.FindAsync(id);
+            var newEmployee = model.Adapt<Employee>(); // Assuming Mapster or other mapper
+
+            _dbContextClass.Employees.Add(newEmployee);
+
+            var result = await _dbContextClass.SaveChangesAsync(cancellationToken);
+
+            if (result > 0)
+            {
+                serviceResponse.Status = true;
+                serviceResponse.Message = "Employee added successfully.";
+                serviceResponse.Value = newEmployee.Adapt<GetEmployeeDto>();
+            }
+            else
+            {
+                serviceResponse.Status = false;
+                serviceResponse.Message = "Failed to add new employee.";
+            }
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.Status = false;
+            serviceResponse.Message = $"An error occurred: {ex.Message}";
+        }
+
+        return serviceResponse;
+    }
+
+    public async Task<ServiceResponse<GetEmployeeDto>> UpdateEmployeeAsync(CreateEmployeeDto model, CancellationToken cancellationToken)
+    {
+        var serviceResponse = new ServiceResponse<GetEmployeeDto>();
+
+        try
+        {
+            var emp = await _dbContextClass.Employees
+                                           .Include(x => x.ApplicationUser)
+                                           .SingleOrDefaultAsync(c => c.EmployeeId == model.EmployeeId, cancellationToken);
 
             if (emp == null)
             {
@@ -177,9 +104,74 @@ public class EmployeeLayer : IEmployeeLayer
                 return serviceResponse;
             }
 
-            // Remove the employee and save changes
+            emp.EmployeeName = model.EmployeeName;
+            emp.Salary = model.Salary;
+            emp.Age = model.Age;
+            emp.ApplicationUserId = model.ApplicationUserId;
+
+            await _dbContextClass.SaveChangesAsync(cancellationToken);
+
+            serviceResponse.Status = true;
+            serviceResponse.Message = "Employee updated successfully.";
+            serviceResponse.Value = emp.Adapt<GetEmployeeDto>();
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.Status = false;
+            serviceResponse.Message = $"An error occurred: {ex.Message}";
+        }
+
+        return serviceResponse;
+    }
+
+    public async Task<ServiceResponse<GetEmployeeDto>> GetIdByAsync(int Id, CancellationToken cancellationToken)
+    {
+        var serviceResponse = new ServiceResponse<GetEmployeeDto>();
+
+        try
+        {
+            var emp = await _dbContextClass.Employees
+                                           .Include(x => x.ApplicationUser)
+                                           .AsNoTracking()
+                                           .SingleOrDefaultAsync(x => x.EmployeeId == Id, cancellationToken);
+
+            if (emp == null)
+            {
+                serviceResponse.Status = false;
+                serviceResponse.Message = "Employee not found.";
+                return serviceResponse;
+            }
+
+            serviceResponse.Value = emp.Adapt<GetEmployeeDto>();
+            serviceResponse.Status = true;
+            serviceResponse.Message = "Fetched successfully.";
+        }
+        catch (Exception ex)
+        {
+            serviceResponse.Status = false;
+            serviceResponse.Message = $"An error occurred: {ex.Message}";
+        }
+
+        return serviceResponse;
+    }
+
+    public async Task<ServiceResponse<bool>> DeleteByIdAsync(int id, CancellationToken cancellationToken)
+    {
+        var serviceResponse = new ServiceResponse<bool>();
+
+        try
+        {
+            var emp = await _dbContextClass.Employees.FindAsync(new object[] { id }, cancellationToken);
+
+            if (emp == null)
+            {
+                serviceResponse.Status = false;
+                serviceResponse.Message = "Employee not found.";
+                return serviceResponse;
+            }
+
             _dbContextClass.Employees.Remove(emp);
-            await _dbContextClass.SaveChangesAsync();
+            await _dbContextClass.SaveChangesAsync(cancellationToken);
 
             serviceResponse.Status = true;
             serviceResponse.Message = "Deleted successfully.";
@@ -193,15 +185,15 @@ public class EmployeeLayer : IEmployeeLayer
         return serviceResponse;
     }
 
-    public async Task<ServiceResponse<GetEmployeeDto>> PatchEmployeeAsync(int Id, string empName)
+    public async Task<ServiceResponse<GetEmployeeDto>> PatchEmployeeAsync(int Id, string empName, CancellationToken cancellationToken)
     {
         var serviceResponse = new ServiceResponse<GetEmployeeDto>();
 
         try
         {
-            // Fetch the actual Employee entity by ID
-            var emp = await _dbContextClass.Employees.Include(x => x.ApplicationUser)
-                                          .FirstOrDefaultAsync(c => c.EmployeeId == Id);
+            var emp = await _dbContextClass.Employees
+                                          .Include(x => x.ApplicationUser)
+                                          .SingleOrDefaultAsync(c => c.EmployeeId == Id, cancellationToken);
 
             if (emp == null)
             {
@@ -210,12 +202,10 @@ public class EmployeeLayer : IEmployeeLayer
                 return serviceResponse;
             }
 
-            // Only update if the EmployeeName is different
             if (emp.EmployeeName != empName)
             {
-                emp.EmployeeName = empName; 
-
-                await _dbContextClass.SaveChangesAsync();
+                emp.EmployeeName = empName;
+                await _dbContextClass.SaveChangesAsync(cancellationToken);
 
                 serviceResponse.Status = true;
                 serviceResponse.Message = "Employee name updated successfully.";
