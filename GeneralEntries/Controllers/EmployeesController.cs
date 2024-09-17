@@ -65,6 +65,12 @@ namespace GeneralEntries.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (cancellationToken.IsCancellationRequested)
+            {
+                Console.WriteLine("Cancelled");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Request was canceled.");
+            }
+
             var response = await _employeeLayer.AddNewEmployeeAsync(model, cancellationToken);
 
             if (!response.Status)
