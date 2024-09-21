@@ -16,7 +16,7 @@ public class Company
 
     [ForeignKey(nameof(Employee))]
     public int EmployeeId { get; set; } 
-    public virtual Employee Employee { get; set; } = null!; // Non-nullable reference type
+    public virtual Employee Employee { get; set; }
 
     public virtual ICollection<ChartsofAccounts> Charts { get; private set; } = new List<ChartsofAccounts>();
 }

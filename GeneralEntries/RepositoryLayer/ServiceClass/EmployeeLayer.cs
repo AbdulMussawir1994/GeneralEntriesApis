@@ -1,5 +1,6 @@
 ﻿using GeneralEntries.ContextClass;
 using GeneralEntries.DTOs;
+using GeneralEntries.DTOs.CompaniesDto;
 using GeneralEntries.Helpers.Response;
 using GeneralEntries.Models;
 using GeneralEntries.RepositoryLayer.InterfaceClass;
@@ -24,31 +25,41 @@ public class EmployeeLayer : IEmployeeLayer
 
     public async Task<ServiceResponse<IEnumerable<GetEmployeeDto>>> GetListAsync(CancellationToken cancellationToken)
     {
+        _logger.LogInformation("GetListAsync EmployeeLayer is Calling");
         var serviceResponse = new ServiceResponse<IEnumerable<GetEmployeeDto>>();
         try
         {
             var result = await _dbContextClass.Employees
                                               .Include(x => x.ApplicationUser)
                                               .IgnoreQueryFilters()
-                                              .AsNoTracking()
+                                           //   .AsNoTracking()
+                                              .AsSplitQuery()
                                               .ToListAsync(cancellationToken);
 
             if (result.Any())
             {
                 serviceResponse.Value = result.Adapt<IEnumerable<GetEmployeeDto>>();
-                serviceResponse.Status = true;
                 serviceResponse.Message = "Fetched all employee records successfully.";
             }
             else
             {
-                serviceResponse.Status = true;
+                serviceResponse.Value = Enumerable.Empty<GetEmployeeDto>();
                 serviceResponse.Message = "No employee records found.";
             }
+            serviceResponse.Status = true;
+
+        }
+        catch (OperationCanceledException)
+        {
+            serviceResponse.Status = false;
+            serviceResponse.Message = "The operation was canceled.";
+            _logger.LogWarning("Employee query operation was canceled.");
         }
         catch (Exception ex)
         {
             serviceResponse.Status = false;
             serviceResponse.Message = $"An error occurred: {ex.Message}";
+            _logger.LogError(ex, "Error occurred while fetching employee data.");
         }
 
         return serviceResponse;
@@ -157,6 +168,7 @@ public class EmployeeLayer : IEmployeeLayer
 
     public async Task<ServiceResponse<bool>> DeleteByIdAsync(int id, CancellationToken cancellationToken)
     {
+        _logger.LogInformation("Delete EmployeeLayer is Calling");
         var serviceResponse = new ServiceResponse<bool>();
 
         try
@@ -180,6 +192,7 @@ public class EmployeeLayer : IEmployeeLayer
         {
             serviceResponse.Status = false;
             serviceResponse.Message = $"An error occurred: {ex.Message}";
+            _logger.LogError("Delete Employee from Employee Layer Error Occur : Message: " + ex.Message);
         }
 
         return serviceResponse;

@@ -20,6 +20,8 @@ using NLog;
 using NLog.Web;
 using Hangfire;
 using HangfireBasicAuthenticationFilter;
+using Serilog;
+using Serilog.Formatting.Json;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -32,11 +34,19 @@ try
     ConfigurationManager Configuration = builder.Configuration; // allows both to access and to set up the config
     IWebHostEnvironment env = builder.Environment;
 
-    var log = LoggerFactory
-        .Create(config =>
-        {
-            config.AddConsole();
-        }).CreateLogger("Program");
+    var logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs", "applogs-.txt");
+
+    Log.Logger = new LoggerConfiguration()
+        .MinimumLevel.Debug() // Set minimum log level to Debug
+        .Enrich.FromLogContext() // Enrich logs with more context
+        .WriteTo.Console() // Log to console
+        .WriteTo.File(new JsonFormatter(),
+                      logFilePath,
+                      rollingInterval: RollingInterval.Day, // Roll logs daily
+                      retainedFileCountLimit: 7, // Keep logs for the last 7 days
+                      fileSizeLimitBytes: 10 * 1024 * 1024, // Optional: Max size of each file (10MB)
+                      shared: true) // Allow sharing between multiple processes
+        .CreateLogger();
 
     builder.Services.AddHttpContextAccessor();
     builder.Services.AddHttpClient();
@@ -95,6 +105,7 @@ try
 
     builder.Services.AddScoped<IAuthLayer, AuthLayer>();
     builder.Services.AddScoped<IEmployeeLayer, EmployeeLayer>();
+    builder.Services.AddScoped<ICompanyLayer, CompanyLayer>();
 
     builder.Services.AddTransient<GlobalExceptionHandler>();
 

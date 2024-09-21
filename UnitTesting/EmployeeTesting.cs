@@ -18,6 +18,7 @@ public class EmployeeTesting
     private readonly Mock<IConfiguration> _mockIconfiguration;
     private readonly Mock<IHttpContextAccessor> _mockHttpContextAccessor;
     private readonly Mock<ILogger<EmployeeLayer>> _mockLogger;
+    private readonly Mock<ILogger<EmployeesController>> _mockLoggerController;
     private readonly IEmployeeLayer _employeeService;
     private readonly DbContextClass _dbContext;
     private readonly EmployeesController _controller;
@@ -31,12 +32,13 @@ public class EmployeeTesting
             .UseInMemoryDatabase(databaseName: "EmployeeTestDB")
             .Options;
 
-        _dbContext = new DbContextClass(options);
+      //  _dbContext = new DbContextClass(options);
         _mockLogger = new Mock<ILogger<EmployeeLayer>>();
+        _mockLoggerController = new Mock<ILogger<EmployeesController>>();
         _mockIconfiguration = new Mock<IConfiguration>();
         _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
         _mockEmployeeLayer = new Mock<IEmployeeLayer>();
-        _controller = new EmployeesController(_mockEmployeeLayer.Object);
+        _controller = new EmployeesController(_mockEmployeeLayer.Object, _mockLoggerController.Object);
 
         _employeeService = new EmployeeLayer(_mockIconfiguration.Object, _mockLogger.Object, _dbContext);
 

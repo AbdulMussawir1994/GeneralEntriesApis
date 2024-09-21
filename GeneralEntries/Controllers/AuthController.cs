@@ -12,8 +12,9 @@ using System.Security.Claims;
 
 namespace GeneralEntries.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("2.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly SignInManager<ApplicationUser> _signInManager;

@@ -1,6 +1,6 @@
 ﻿namespace GeneralEntries.Helpers.Response
 {
-    public class ApiMessages
+    public static class ApiMessages
     {
         public const string UnauthorizedUser = "Error : User Info not found. The User is no authorize!";
         public const string InvalidInput = "Error : Invalid input!";

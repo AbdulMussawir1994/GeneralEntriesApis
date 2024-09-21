@@ -17,7 +17,7 @@ public class ChartsofAccounts
 
     [ForeignKey(nameof(Company))]
     public int CompanyId { get; set; }
-    public virtual Company Company { get; set; } = null!; // Non-nullable reference type
+    public virtual Company Company { get; set; }
 
     public virtual ICollection<GeneralEntry> AllEntries { get; private set; } = new List<GeneralEntry>();
 }

@@ -5,14 +5,21 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using System.Reflection.Emit;
+using System;
 
 namespace GeneralEntries.ContextClass;
 
 public class DbContextClass : IdentityDbContext<ApplicationUser>
 {
-    public DbContextClass(DbContextOptions<DbContextClass> options) : base(options)
+    private readonly ILogger<DbContextClass> _logger;
+
+    public DbContextClass(DbContextOptions<DbContextClass> options, ILogger<DbContextClass> logger) : base(options)
     {
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
         try
+
         {
             var databaseCreator = Database.GetService<IDatabaseCreator>() as RelationalDatabaseCreator;
             if (databaseCreator != null)
@@ -24,10 +31,20 @@ public class DbContextClass : IdentityDbContext<ApplicationUser>
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+            _logger.LogError(ex, "An error occurred while initializing the database.");
         }
     }
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        builder.Entity<Company>().HasIndex(u => u.CompanyName).IsUnique();
+
+        // Configure Employee-Company relationship with Restrict Delete behavior
+        builder.Entity<Company>()
+            .HasOne(c => c.Employee)
+            .WithMany() // No need for navigation property here
+            .HasForeignKey(c => c.EmployeeId)
+            .OnDelete(DeleteBehavior.Restrict); // Restrict deletion if Company exists
+
         var IdentityRole1 = new IdentityRole()
         {
             Id = Guid.NewGuid().ToString(),

@@ -11,10 +11,12 @@ namespace GeneralEntries.Controllers
     public class EmployeesController : ControllerBase
     {
         private readonly IEmployeeLayer _employeeLayer;
+        private readonly ILogger<EmployeesController> _logger;
 
-        public EmployeesController(IEmployeeLayer employeeLayer)
+        public EmployeesController(IEmployeeLayer employeeLayer, ILogger<EmployeesController> logger)
         {
             _employeeLayer = employeeLayer;
+            _logger = logger;
         }
 
         [HttpGet("List")]
@@ -24,34 +26,16 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<GetEmployeeDto>>> GetEmployees(CancellationToken cancellationToken)
         {
-            try
+
+            var result = await _employeeLayer.GetListAsync(cancellationToken);
+
+            if (!result.Status)
             {
-                //  await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    Console.WriteLine("Cancelled");
-                    return StatusCode(StatusCodes.Status500InternalServerError, "Request was canceled.");
-                }
-
-                var result = await _employeeLayer.GetListAsync(cancellationToken);
-
-                if (!result.Status)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, result);
-                }
-                return Ok(result);
-
+                _logger.LogWarning("Bad request in GetEmployees: {@Result}", result);
+                return BadRequest(result);
             }
-            catch (OperationCanceledException)
-            {
-                Console.WriteLine("Cancelled");
-                return StatusCode(StatusCodes.Status500InternalServerError, "Request was canceled.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, $"An error occurred: {ex.Message}");
-            }
+
+            return Ok(result);
         }
 
         [HttpPost("Add")]
@@ -75,7 +59,7 @@ namespace GeneralEntries.Controllers
 
             if (!response.Status)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return BadRequest(response);
             }
 
             return Ok(response);
@@ -96,7 +80,7 @@ namespace GeneralEntries.Controllers
 
             if (!response.Status)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return BadRequest(response);
             }
 
             return Ok(response);
@@ -118,7 +102,7 @@ namespace GeneralEntries.Controllers
 
             if (!response.Status)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return BadRequest(response);
             }
 
             return Ok(response);
@@ -140,7 +124,7 @@ namespace GeneralEntries.Controllers
 
             if (!response.Status)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return BadRequest(response);
             }
 
             return Ok(response);
@@ -161,7 +145,7 @@ namespace GeneralEntries.Controllers
             var response = await _employeeLayer.PatchEmployeeAsync(Id, empName, cancellationToken);
             if (!response.Status)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, response);
+                return BadRequest(response);
             }
 
             return Ok(response);

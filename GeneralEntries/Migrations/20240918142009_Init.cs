@@ -205,7 +205,7 @@ namespace GeneralEntries.Migrations
                 {
                     CompanyId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    CompanyName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CompanyName = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     City = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Branch = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -219,7 +219,7 @@ namespace GeneralEntries.Migrations
                         column: x => x.EmployeeId,
                         principalTable: "Employees",
                         principalColumn: "EmployeeId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -284,10 +284,10 @@ namespace GeneralEntries.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "10bdfb23-a1b3-47be-b614-002ffc63a538", "1c90a1ab-7b2e-4d08-ba35-8679c0cb764c", "Admin", "ADMIN" },
-                    { "5b8c9ca2-f2e2-43bf-ab1c-ab63aa01dd3a", "f4f6eba8-8b6b-41b1-98dd-f5f5f3f90ad0", "Manager", "MANAGER" },
-                    { "a3f5df59-a0c6-4586-a9f0-431843d3749c", "fc476ba7-ecca-4dd0-bf52-2da09fe41532", "User", "USER" },
-                    { "f7b1c274-7e98-42b2-a82a-cdb521f9aaee", "6d853589-a7e4-46a0-98d3-4af3bf0a6ee5", "Employee", "EMPLOYEE" }
+                    { "12907185-2c80-4e90-b603-384a2c0a19c0", "e91dd84e-01a2-4902-86f5-724a185587b4", "Admin", "ADMIN" },
+                    { "85611d21-5abd-4aa3-88ef-fbbf55b16b94", "42d39c11-eb0c-4449-9d22-d1588b50b71d", "Manager", "MANAGER" },
+                    { "bc7efa71-84dc-45ef-a38b-fa42aba10733", "885a06e4-d716-4aef-850e-2b86a42954c4", "User", "USER" },
+                    { "cccfbda6-4b61-4781-93bf-e97a2d26a85b", "8e845b82-9000-4a82-8ad8-fb1c8b9fa760", "Employee", "EMPLOYEE" }
                 });
 
             migrationBuilder.InsertData(
@@ -295,10 +295,10 @@ namespace GeneralEntries.Migrations
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "DateCreated", "DateModified", "Email", "EmailConfirmed", "FirstName", "LastName", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "RefreshToken", "RefreshTokenExpiryTime", "SecurityStamp", "TwoFactorEnabled", "UserName" },
                 values: new object[,]
                 {
-                    { "3857779e-aa32-4e1f-9e02-f6a758bc4616", 0, "dea82089-5e2f-4858-9a3e-b486ffdb852b", new DateTime(2024, 9, 9, 4, 34, 3, 65, DateTimeKind.Utc).AddTicks(6959), new DateTime(2024, 9, 9, 4, 34, 3, 65, DateTimeKind.Utc).AddTicks(6963), "Shehneela@hotmail.com", false, "Shehneela", "Khan", false, null, "SHEHNEELA@HOTMAIL.COM", "SHEHNEELA", "AQAAAAIAAYagAAAAEC9iQ4KTHFvNzo5a1VN0pDFR1N30MkaF5Ib9MIjaYD1J0ARyR4OxtxMnUz/x93dfhw==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "c840555a-8c22-412d-958c-558604c4f2de", false, "Shehneela Khan" },
-                    { "4e68632f-2771-4305-8001-165fdfe18022", 0, "4e4dbead-2bf4-40c5-9856-4003b74541bd", new DateTime(2024, 9, 9, 4, 34, 3, 128, DateTimeKind.Utc).AddTicks(188), new DateTime(2024, 9, 9, 4, 34, 3, 128, DateTimeKind.Utc).AddTicks(197), "Salman@hotmail.com", false, "Salman", "Khan", false, null, "SALMAN@HOTMAIL.COM", "SALMAN", "AQAAAAIAAYagAAAAEOaGVwGQ6EZbkg+yW+WAk+NFA7wNIRBF3KJy8zKeMaPnd0vrJ7lQYmRYHGtNR4EBTA==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "1ffe0c97-7b8f-4f0d-8fec-a46ddb5c2172", false, "Salman Khan" },
-                    { "77b5e980-9439-4d81-922a-b368d1bf3ecf", 0, "4502a6cf-7f54-4c26-9d68-158471c51909", new DateTime(2024, 9, 9, 4, 34, 3, 2, DateTimeKind.Utc).AddTicks(6633), new DateTime(2024, 9, 9, 4, 34, 3, 2, DateTimeKind.Utc).AddTicks(6637), "Raheel@hotmail.com", false, "Raheel", "Sheikh", false, null, "RAHEEL@HOTMAIL.COM", "RAHEEL", "AQAAAAIAAYagAAAAEB212wSiD6y38tDcZS0LnTrg/7amyKn6ls13m3rDMyIVzIVhp18WLFbwFOPkYDlCAg==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "9723be5c-1a46-427f-8310-7d879fe97c63", false, "Raheel" },
-                    { "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5", 0, "fac60314-3509-4de3-a9dc-6fa1d6526016", new DateTime(2024, 9, 9, 4, 34, 2, 940, DateTimeKind.Utc).AddTicks(7408), new DateTime(2024, 9, 9, 4, 34, 2, 940, DateTimeKind.Utc).AddTicks(7409), "Abdul_mussawir@hotmail.com", false, "AbdulMussawir", "Sheikh", false, null, "ABDUL_MUSSAWIR@HOTMAIL.COM", "ABDULMUSSAWIR", "AQAAAAIAAYagAAAAEMYTaZIyZEz9Ho7BniOx7sxcM6kEP7H+t8IqoF97q7d75I8xrbkgvIULZUQI61reXg==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "5f1d0701-26f5-4e49-a421-798fc340e966", false, "Abdul Mussawir" }
+                    { "0d887aff-dc9f-4903-bfe6-86c468d7db6d", 0, "ef6458c6-f23a-4303-9309-404d47295c4e", new DateTime(2024, 9, 18, 14, 20, 6, 200, DateTimeKind.Utc).AddTicks(4998), new DateTime(2024, 9, 18, 14, 20, 6, 200, DateTimeKind.Utc).AddTicks(5003), "Salman@hotmail.com", false, "Salman", "Khan", false, null, "SALMAN@HOTMAIL.COM", "SALMAN", "AQAAAAIAAYagAAAAEDUOmapXr4bOgnuWflx4bfBiWZwHg7MhNRmCOQ243ajRSF4L7NCsJughm5VajBOU6A==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "0fbee2d2-11fa-4d90-93fb-62b60517b2cc", false, "Salman Khan" },
+                    { "37a286c2-e2f2-4ccc-9f9c-f8592b6af924", 0, "0bb30423-3db6-4d2a-80d0-ac8a43575d8a", new DateTime(2024, 9, 18, 14, 20, 6, 126, DateTimeKind.Utc).AddTicks(2171), new DateTime(2024, 9, 18, 14, 20, 6, 126, DateTimeKind.Utc).AddTicks(2176), "Shehneela@hotmail.com", false, "Shehneela", "Khan", false, null, "SHEHNEELA@HOTMAIL.COM", "SHEHNEELA", "AQAAAAIAAYagAAAAEF51ioQQW8kkPKKbMnjwHL01zxNKnlTtJnrFZ55V7G97YSxYNEJ+oBP8iiSxHY1z2Q==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "2f9a16c5-ae90-45be-861a-140f569de5be", false, "Shehneela Khan" },
+                    { "4e977b81-8b10-4bea-b18c-75b4495e7439", 0, "4097dab3-5ac6-41fb-b64a-81ff0bc3e2c6", new DateTime(2024, 9, 18, 14, 20, 5, 998, DateTimeKind.Utc).AddTicks(7692), new DateTime(2024, 9, 18, 14, 20, 5, 998, DateTimeKind.Utc).AddTicks(7695), "Abdul_mussawir@hotmail.com", false, "AbdulMussawir", "Sheikh", false, null, "ABDUL_MUSSAWIR@HOTMAIL.COM", "ABDULMUSSAWIR", "AQAAAAIAAYagAAAAEEyKE23rjw+WWAZevpmhOUxDYI10+im0REU1VsMEtbCyNW64YU0/mft8ECIuHRVuCA==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "039352da-a42f-4bc0-8a25-7e540a473eb3", false, "Abdul Mussawir" },
+                    { "a3f6a564-11ed-4727-b878-9932ce5d0f4e", 0, "4a049524-802a-4314-ba44-ea406842a689", new DateTime(2024, 9, 18, 14, 20, 6, 63, DateTimeKind.Utc).AddTicks(5738), new DateTime(2024, 9, 18, 14, 20, 6, 63, DateTimeKind.Utc).AddTicks(5744), "Raheel@hotmail.com", false, "Raheel", "Sheikh", false, null, "RAHEEL@HOTMAIL.COM", "RAHEEL", "AQAAAAIAAYagAAAAEOZ6nSx+SYfPrITRE5bBS3KGS5akB41FmLTltst+rlTtqT+Ejo6u9FZ6JyuX7/KM8w==", null, false, "", new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), "3f6a1751-3863-4233-bf19-d5e0ca5e6e86", false, "Raheel" }
                 });
 
             migrationBuilder.InsertData(
@@ -306,14 +306,14 @@ namespace GeneralEntries.Migrations
                 columns: new[] { "Id", "ClaimType", "ClaimValue", "UserId" },
                 values: new object[,]
                 {
-                    { 1, "Admin", "Add Manager", "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5" },
-                    { 2, "Admin", "Edit Manager", "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5" },
-                    { 3, "Admin", "Delete Manager", "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5" },
-                    { 4, "Admin", "Get Manager", "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5" },
-                    { 5, "Manager", "Add Employee", "77b5e980-9439-4d81-922a-b368d1bf3ecf" },
-                    { 6, "Manager", "Edit Employee", "77b5e980-9439-4d81-922a-b368d1bf3ecf" },
-                    { 7, "Manager", "Delete Employee", "77b5e980-9439-4d81-922a-b368d1bf3ecf" },
-                    { 8, "Manager", "Get Employee", "77b5e980-9439-4d81-922a-b368d1bf3ecf" }
+                    { 1, "Admin", "Add Manager", "4e977b81-8b10-4bea-b18c-75b4495e7439" },
+                    { 2, "Admin", "Edit Manager", "4e977b81-8b10-4bea-b18c-75b4495e7439" },
+                    { 3, "Admin", "Delete Manager", "4e977b81-8b10-4bea-b18c-75b4495e7439" },
+                    { 4, "Admin", "Get Manager", "4e977b81-8b10-4bea-b18c-75b4495e7439" },
+                    { 5, "Manager", "Add Employee", "a3f6a564-11ed-4727-b878-9932ce5d0f4e" },
+                    { 6, "Manager", "Edit Employee", "a3f6a564-11ed-4727-b878-9932ce5d0f4e" },
+                    { 7, "Manager", "Delete Employee", "a3f6a564-11ed-4727-b878-9932ce5d0f4e" },
+                    { 8, "Manager", "Get Employee", "a3f6a564-11ed-4727-b878-9932ce5d0f4e" }
                 });
 
             migrationBuilder.InsertData(
@@ -321,16 +321,16 @@ namespace GeneralEntries.Migrations
                 columns: new[] { "RoleId", "UserId" },
                 values: new object[,]
                 {
-                    { "f7b1c274-7e98-42b2-a82a-cdb521f9aaee", "3857779e-aa32-4e1f-9e02-f6a758bc4616" },
-                    { "a3f5df59-a0c6-4586-a9f0-431843d3749c", "4e68632f-2771-4305-8001-165fdfe18022" },
-                    { "5b8c9ca2-f2e2-43bf-ab1c-ab63aa01dd3a", "77b5e980-9439-4d81-922a-b368d1bf3ecf" },
-                    { "10bdfb23-a1b3-47be-b614-002ffc63a538", "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5" }
+                    { "bc7efa71-84dc-45ef-a38b-fa42aba10733", "0d887aff-dc9f-4903-bfe6-86c468d7db6d" },
+                    { "cccfbda6-4b61-4781-93bf-e97a2d26a85b", "37a286c2-e2f2-4ccc-9f9c-f8592b6af924" },
+                    { "12907185-2c80-4e90-b603-384a2c0a19c0", "4e977b81-8b10-4bea-b18c-75b4495e7439" },
+                    { "85611d21-5abd-4aa3-88ef-fbbf55b16b94", "a3f6a564-11ed-4727-b878-9932ce5d0f4e" }
                 });
 
             migrationBuilder.InsertData(
                 table: "Employees",
                 columns: new[] { "EmployeeId", "Age", "ApplicationUserId", "EmployeeName", "Salary" },
-                values: new object[] { 1, 29, "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5", "Raheel", 100000m });
+                values: new object[] { 1, 29, "4e977b81-8b10-4bea-b18c-75b4495e7439", "Raheel", 100000m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -375,6 +375,13 @@ namespace GeneralEntries.Migrations
                 name: "IX_ChartsOfAccounts_CompanyId",
                 table: "ChartsOfAccounts",
                 column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Companies_CompanyName",
+                table: "Companies",
+                column: "CompanyName",
+                unique: true,
+                filter: "[CompanyName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Companies_EmployeeId",

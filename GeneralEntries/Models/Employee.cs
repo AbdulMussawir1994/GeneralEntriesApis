@@ -14,8 +14,8 @@ public class Employee
     public decimal Salary { get; set; }
 
     // UserName is not mapped to the database
-    [NotMapped]
-    public string UserName { get; set; } = string.Empty;
+    //[NotMapped]
+    //public string UserName { get; set; } = string.Empty;
 
     [ForeignKey(nameof(ApplicationUser))]
     public string ApplicationUserId { get; set; } = string.Empty;

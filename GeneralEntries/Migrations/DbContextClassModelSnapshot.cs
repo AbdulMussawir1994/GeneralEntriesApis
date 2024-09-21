@@ -107,11 +107,11 @@ namespace GeneralEntries.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5",
+                            Id = "4e977b81-8b10-4bea-b18c-75b4495e7439",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "fac60314-3509-4de3-a9dc-6fa1d6526016",
-                            DateCreated = new DateTime(2024, 9, 9, 4, 34, 2, 940, DateTimeKind.Utc).AddTicks(7408),
-                            DateModified = new DateTime(2024, 9, 9, 4, 34, 2, 940, DateTimeKind.Utc).AddTicks(7409),
+                            ConcurrencyStamp = "4097dab3-5ac6-41fb-b64a-81ff0bc3e2c6",
+                            DateCreated = new DateTime(2024, 9, 18, 14, 20, 5, 998, DateTimeKind.Utc).AddTicks(7692),
+                            DateModified = new DateTime(2024, 9, 18, 14, 20, 5, 998, DateTimeKind.Utc).AddTicks(7695),
                             Email = "Abdul_mussawir@hotmail.com",
                             EmailConfirmed = false,
                             FirstName = "AbdulMussawir",
@@ -119,21 +119,21 @@ namespace GeneralEntries.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "ABDUL_MUSSAWIR@HOTMAIL.COM",
                             NormalizedUserName = "ABDULMUSSAWIR",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMYTaZIyZEz9Ho7BniOx7sxcM6kEP7H+t8IqoF97q7d75I8xrbkgvIULZUQI61reXg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEyKE23rjw+WWAZevpmhOUxDYI10+im0REU1VsMEtbCyNW64YU0/mft8ECIuHRVuCA==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "5f1d0701-26f5-4e49-a421-798fc340e966",
+                            SecurityStamp = "039352da-a42f-4bc0-8a25-7e540a473eb3",
                             TwoFactorEnabled = false,
                             UserName = "Abdul Mussawir"
                         },
                         new
                         {
-                            Id = "77b5e980-9439-4d81-922a-b368d1bf3ecf",
+                            Id = "a3f6a564-11ed-4727-b878-9932ce5d0f4e",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4502a6cf-7f54-4c26-9d68-158471c51909",
-                            DateCreated = new DateTime(2024, 9, 9, 4, 34, 3, 2, DateTimeKind.Utc).AddTicks(6633),
-                            DateModified = new DateTime(2024, 9, 9, 4, 34, 3, 2, DateTimeKind.Utc).AddTicks(6637),
+                            ConcurrencyStamp = "4a049524-802a-4314-ba44-ea406842a689",
+                            DateCreated = new DateTime(2024, 9, 18, 14, 20, 6, 63, DateTimeKind.Utc).AddTicks(5738),
+                            DateModified = new DateTime(2024, 9, 18, 14, 20, 6, 63, DateTimeKind.Utc).AddTicks(5744),
                             Email = "Raheel@hotmail.com",
                             EmailConfirmed = false,
                             FirstName = "Raheel",
@@ -141,21 +141,21 @@ namespace GeneralEntries.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "RAHEEL@HOTMAIL.COM",
                             NormalizedUserName = "RAHEEL",
-                            PasswordHash = "AQAAAAIAAYagAAAAEB212wSiD6y38tDcZS0LnTrg/7amyKn6ls13m3rDMyIVzIVhp18WLFbwFOPkYDlCAg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEOZ6nSx+SYfPrITRE5bBS3KGS5akB41FmLTltst+rlTtqT+Ejo6u9FZ6JyuX7/KM8w==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "9723be5c-1a46-427f-8310-7d879fe97c63",
+                            SecurityStamp = "3f6a1751-3863-4233-bf19-d5e0ca5e6e86",
                             TwoFactorEnabled = false,
                             UserName = "Raheel"
                         },
                         new
                         {
-                            Id = "3857779e-aa32-4e1f-9e02-f6a758bc4616",
+                            Id = "37a286c2-e2f2-4ccc-9f9c-f8592b6af924",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "dea82089-5e2f-4858-9a3e-b486ffdb852b",
-                            DateCreated = new DateTime(2024, 9, 9, 4, 34, 3, 65, DateTimeKind.Utc).AddTicks(6959),
-                            DateModified = new DateTime(2024, 9, 9, 4, 34, 3, 65, DateTimeKind.Utc).AddTicks(6963),
+                            ConcurrencyStamp = "0bb30423-3db6-4d2a-80d0-ac8a43575d8a",
+                            DateCreated = new DateTime(2024, 9, 18, 14, 20, 6, 126, DateTimeKind.Utc).AddTicks(2171),
+                            DateModified = new DateTime(2024, 9, 18, 14, 20, 6, 126, DateTimeKind.Utc).AddTicks(2176),
                             Email = "Shehneela@hotmail.com",
                             EmailConfirmed = false,
                             FirstName = "Shehneela",
@@ -163,21 +163,21 @@ namespace GeneralEntries.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SHEHNEELA@HOTMAIL.COM",
                             NormalizedUserName = "SHEHNEELA",
-                            PasswordHash = "AQAAAAIAAYagAAAAEC9iQ4KTHFvNzo5a1VN0pDFR1N30MkaF5Ib9MIjaYD1J0ARyR4OxtxMnUz/x93dfhw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEF51ioQQW8kkPKKbMnjwHL01zxNKnlTtJnrFZ55V7G97YSxYNEJ+oBP8iiSxHY1z2Q==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "c840555a-8c22-412d-958c-558604c4f2de",
+                            SecurityStamp = "2f9a16c5-ae90-45be-861a-140f569de5be",
                             TwoFactorEnabled = false,
                             UserName = "Shehneela Khan"
                         },
                         new
                         {
-                            Id = "4e68632f-2771-4305-8001-165fdfe18022",
+                            Id = "0d887aff-dc9f-4903-bfe6-86c468d7db6d",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4e4dbead-2bf4-40c5-9856-4003b74541bd",
-                            DateCreated = new DateTime(2024, 9, 9, 4, 34, 3, 128, DateTimeKind.Utc).AddTicks(188),
-                            DateModified = new DateTime(2024, 9, 9, 4, 34, 3, 128, DateTimeKind.Utc).AddTicks(197),
+                            ConcurrencyStamp = "ef6458c6-f23a-4303-9309-404d47295c4e",
+                            DateCreated = new DateTime(2024, 9, 18, 14, 20, 6, 200, DateTimeKind.Utc).AddTicks(4998),
+                            DateModified = new DateTime(2024, 9, 18, 14, 20, 6, 200, DateTimeKind.Utc).AddTicks(5003),
                             Email = "Salman@hotmail.com",
                             EmailConfirmed = false,
                             FirstName = "Salman",
@@ -185,11 +185,11 @@ namespace GeneralEntries.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "SALMAN@HOTMAIL.COM",
                             NormalizedUserName = "SALMAN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOaGVwGQ6EZbkg+yW+WAk+NFA7wNIRBF3KJy8zKeMaPnd0vrJ7lQYmRYHGtNR4EBTA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDUOmapXr4bOgnuWflx4bfBiWZwHg7MhNRmCOQ243ajRSF4L7NCsJughm5VajBOU6A==",
                             PhoneNumberConfirmed = false,
                             RefreshToken = "",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            SecurityStamp = "1ffe0c97-7b8f-4f0d-8fec-a46ddb5c2172",
+                            SecurityStamp = "0fbee2d2-11fa-4d90-93fb-62b60517b2cc",
                             TwoFactorEnabled = false,
                             UserName = "Salman Khan"
                         });
@@ -243,7 +243,7 @@ namespace GeneralEntries.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
@@ -252,6 +252,10 @@ namespace GeneralEntries.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("CompanyId");
+
+                    b.HasIndex("CompanyName")
+                        .IsUnique()
+                        .HasFilter("[CompanyName] IS NOT NULL");
 
                     b.HasIndex("EmployeeId");
 
@@ -289,7 +293,7 @@ namespace GeneralEntries.Migrations
                         {
                             EmployeeId = 1,
                             Age = 29,
-                            ApplicationUserId = "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5",
+                            ApplicationUserId = "4e977b81-8b10-4bea-b18c-75b4495e7439",
                             EmployeeName = "Raheel",
                             Salary = 100000m
                         });
@@ -387,29 +391,29 @@ namespace GeneralEntries.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "10bdfb23-a1b3-47be-b614-002ffc63a538",
-                            ConcurrencyStamp = "1c90a1ab-7b2e-4d08-ba35-8679c0cb764c",
+                            Id = "12907185-2c80-4e90-b603-384a2c0a19c0",
+                            ConcurrencyStamp = "e91dd84e-01a2-4902-86f5-724a185587b4",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = "5b8c9ca2-f2e2-43bf-ab1c-ab63aa01dd3a",
-                            ConcurrencyStamp = "f4f6eba8-8b6b-41b1-98dd-f5f5f3f90ad0",
+                            Id = "85611d21-5abd-4aa3-88ef-fbbf55b16b94",
+                            ConcurrencyStamp = "42d39c11-eb0c-4449-9d22-d1588b50b71d",
                             Name = "Manager",
                             NormalizedName = "MANAGER"
                         },
                         new
                         {
-                            Id = "f7b1c274-7e98-42b2-a82a-cdb521f9aaee",
-                            ConcurrencyStamp = "6d853589-a7e4-46a0-98d3-4af3bf0a6ee5",
+                            Id = "cccfbda6-4b61-4781-93bf-e97a2d26a85b",
+                            ConcurrencyStamp = "8e845b82-9000-4a82-8ad8-fb1c8b9fa760",
                             Name = "Employee",
                             NormalizedName = "EMPLOYEE"
                         },
                         new
                         {
-                            Id = "a3f5df59-a0c6-4586-a9f0-431843d3749c",
-                            ConcurrencyStamp = "fc476ba7-ecca-4dd0-bf52-2da09fe41532",
+                            Id = "bc7efa71-84dc-45ef-a38b-fa42aba10733",
+                            ConcurrencyStamp = "885a06e4-d716-4aef-850e-2b86a42954c4",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -470,56 +474,56 @@ namespace GeneralEntries.Migrations
                             Id = 1,
                             ClaimType = "Admin",
                             ClaimValue = "Add Manager",
-                            UserId = "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5"
+                            UserId = "4e977b81-8b10-4bea-b18c-75b4495e7439"
                         },
                         new
                         {
                             Id = 2,
                             ClaimType = "Admin",
                             ClaimValue = "Edit Manager",
-                            UserId = "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5"
+                            UserId = "4e977b81-8b10-4bea-b18c-75b4495e7439"
                         },
                         new
                         {
                             Id = 3,
                             ClaimType = "Admin",
                             ClaimValue = "Delete Manager",
-                            UserId = "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5"
+                            UserId = "4e977b81-8b10-4bea-b18c-75b4495e7439"
                         },
                         new
                         {
                             Id = 4,
                             ClaimType = "Admin",
                             ClaimValue = "Get Manager",
-                            UserId = "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5"
+                            UserId = "4e977b81-8b10-4bea-b18c-75b4495e7439"
                         },
                         new
                         {
                             Id = 5,
                             ClaimType = "Manager",
                             ClaimValue = "Add Employee",
-                            UserId = "77b5e980-9439-4d81-922a-b368d1bf3ecf"
+                            UserId = "a3f6a564-11ed-4727-b878-9932ce5d0f4e"
                         },
                         new
                         {
                             Id = 6,
                             ClaimType = "Manager",
                             ClaimValue = "Edit Employee",
-                            UserId = "77b5e980-9439-4d81-922a-b368d1bf3ecf"
+                            UserId = "a3f6a564-11ed-4727-b878-9932ce5d0f4e"
                         },
                         new
                         {
                             Id = 7,
                             ClaimType = "Manager",
                             ClaimValue = "Delete Employee",
-                            UserId = "77b5e980-9439-4d81-922a-b368d1bf3ecf"
+                            UserId = "a3f6a564-11ed-4727-b878-9932ce5d0f4e"
                         },
                         new
                         {
                             Id = 8,
                             ClaimType = "Manager",
                             ClaimValue = "Get Employee",
-                            UserId = "77b5e980-9439-4d81-922a-b368d1bf3ecf"
+                            UserId = "a3f6a564-11ed-4727-b878-9932ce5d0f4e"
                         });
                 });
 
@@ -562,23 +566,23 @@ namespace GeneralEntries.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = "a27bcbae-b26c-4ce9-ab22-fc9c1f85d2d5",
-                            RoleId = "10bdfb23-a1b3-47be-b614-002ffc63a538"
+                            UserId = "4e977b81-8b10-4bea-b18c-75b4495e7439",
+                            RoleId = "12907185-2c80-4e90-b603-384a2c0a19c0"
                         },
                         new
                         {
-                            UserId = "77b5e980-9439-4d81-922a-b368d1bf3ecf",
-                            RoleId = "5b8c9ca2-f2e2-43bf-ab1c-ab63aa01dd3a"
+                            UserId = "a3f6a564-11ed-4727-b878-9932ce5d0f4e",
+                            RoleId = "85611d21-5abd-4aa3-88ef-fbbf55b16b94"
                         },
                         new
                         {
-                            UserId = "3857779e-aa32-4e1f-9e02-f6a758bc4616",
-                            RoleId = "f7b1c274-7e98-42b2-a82a-cdb521f9aaee"
+                            UserId = "37a286c2-e2f2-4ccc-9f9c-f8592b6af924",
+                            RoleId = "cccfbda6-4b61-4781-93bf-e97a2d26a85b"
                         },
                         new
                         {
-                            UserId = "4e68632f-2771-4305-8001-165fdfe18022",
-                            RoleId = "a3f5df59-a0c6-4586-a9f0-431843d3749c"
+                            UserId = "0d887aff-dc9f-4903-bfe6-86c468d7db6d",
+                            RoleId = "bc7efa71-84dc-45ef-a38b-fa42aba10733"
                         });
                 });
 
@@ -617,7 +621,7 @@ namespace GeneralEntries.Migrations
                     b.HasOne("GeneralEntries.Models.Employee", "Employee")
                         .WithMany()
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Employee");
