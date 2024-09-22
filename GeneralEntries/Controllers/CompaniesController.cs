@@ -23,23 +23,23 @@ namespace GeneralEntries.Controllers
             _companyLayer = companyLayer;
         }
 
+        //[HttpGet]
+        //public async Task<IQueryable<ChartsDtos>> GetAllChartsofDtos1()
+        //{
+        //    var Charts = await _context.ChartsofAccounts.Include(p => p.CompanyIdNavigation).Select(p => ModelConverter.ModeltoDto(p)).ToListAsync();
+        //    return (IQueryable<ChartsDtos>)Charts;
+        //}
+
+
         [HttpGet("CompanyList")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> GetCompaniesList(CancellationToken cancellationToken)
+        public async Task<ActionResult> GetCompaniesList(CancellationToken cancellationToken)
         {
             try
             {
-                //await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    Console.WriteLine("Cancelled");
-                }
-
                 _logger.LogInformation("Fetching Company Controller");
 
                 var result = await _companyLayer.GetCompaniesList(cancellationToken);
@@ -67,7 +67,7 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<GetCompanyDto>> AddCompany([FromBody] CreateComDto model, CancellationToken cancellationToken)
+        public async Task<ActionResult> AddCompany([FromBody] CreateComDto model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -88,7 +88,7 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<GetCompanyDto>> UpdateCompany([FromBody] CreateComDto model, CancellationToken cancellationToken)
+        public async Task<ActionResult> UpdateCompany([FromBody] CreateComDto model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {

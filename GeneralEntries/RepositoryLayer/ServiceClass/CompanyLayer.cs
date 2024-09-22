@@ -6,6 +6,8 @@ using GeneralEntries.Models;
 using GeneralEntries.RepositoryLayer.InterfaceClass;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using Newtonsoft.Json;
 
 namespace GeneralEntries.RepositoryLayer.ServiceClass
 {
@@ -15,12 +17,14 @@ namespace GeneralEntries.RepositoryLayer.ServiceClass
         private readonly IConfiguration _configuration;
         private readonly ILogger<EmployeeLayer> _logger;
         private readonly DbContextClass _dbContextClass;
+        private readonly IDistributedCache _distributedCache;
 
-        public CompanyLayer(IConfiguration configuration, ILogger<EmployeeLayer> logger, DbContextClass dbContextClass)
+        public CompanyLayer(IConfiguration configuration, ILogger<EmployeeLayer> logger, DbContextClass dbContextClass, IDistributedCache distributedCache)
         {
             _configuration = configuration;
             _logger = logger;
             _dbContextClass = dbContextClass;
+            _distributedCache = distributedCache;
         }
 
         public async Task<ServiceResponse<IEnumerable<GetCompanyDto>>> GetCompaniesList(CancellationToken cancellationToken)
@@ -37,11 +41,32 @@ namespace GeneralEntries.RepositoryLayer.ServiceClass
                                                      .AsNoTracking()
                                                      .ToListAsync(cancellationToken);
 
+
+                ////Redis Working
+
+                //var tomorrow = DateTime.Now.Date.AddDays(1);
+                //var totalSeconds = tomorrow.Subtract(DateTime.Now).TotalSeconds;
+
+                //var distributedCache = new DistributedCacheEntryOptions();
+                //distributedCache.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(totalSeconds);
+                //distributedCache.SlidingExpiration = null;
+
+                //var jsonData = JsonConvert.SerializeObject(empData);
+                //await _distributedCache.SetStringAsync("DashboardData", jsonData, distributedCache);
+
+                ////End
+
                 serviceResponse.Value = result.Adapt<IEnumerable<GetCompanyDto>>();
                 serviceResponse.Status = true;
                 serviceResponse.Message = result.Any()
-                    ? "Fetched all company records successfully."
-                    : "No company records found.";
+                         ? $"Fetched {result.Count} company records successfully."
+                        : "No company records found.";
+            }
+            catch (OperationCanceledException)
+            {
+                _logger.LogWarning("Operation canceled by the client.");
+                serviceResponse.Status = false;
+                serviceResponse.Message = "Request was canceled.";
             }
             catch (Exception ex)
             {

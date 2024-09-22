@@ -146,7 +146,7 @@ public class EmployeeTesting
         var result = await _controller.GetEmployees(CancellationToken.None);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
         var actualData = Assert.IsAssignableFrom<ServiceResponse<IEnumerable<GetEmployeeDto>>>(okResult.Value);
         actualData.Value.Should().BeEquivalentTo(employeeDtos);
     }
@@ -174,7 +174,7 @@ public class EmployeeTesting
         var result = await _controller.GetEmployees(CancellationToken.None);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
         var actualData = Assert.IsAssignableFrom<ServiceResponse<IEnumerable<GetEmployeeDto>>>(okResult.Value);
         actualData.Value.Should().BeEquivalentTo(employeeDtos);
     }
@@ -215,7 +215,7 @@ public class EmployeeTesting
         var result = await _controller.AddEmployee(createEmployeeDto, CancellationToken.None);
 
         // Assert
-        var okResult = result.Result as OkObjectResult;
+        var okResult = result as OkObjectResult;
         okResult.Should().NotBeNull(); // Ensure the result is not null
         okResult!.StatusCode.Should().Be(StatusCodes.Status200OK); // Assert the status code is 200 OK
 
@@ -243,7 +243,7 @@ public class EmployeeTesting
         var result = await _controller.UpdateEmployee(updateEmployeeDto, CancellationToken.None);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
         var actualResponse = Assert.IsAssignableFrom<ServiceResponse<GetEmployeeDto>>(okResult.Value);
         actualResponse.Status.Should().BeTrue();
         actualResponse.Value.EmployeeName.Should().Be("John Doe");
@@ -267,7 +267,7 @@ public class EmployeeTesting
         var result = await _controller.GetEmployeeByIdAsync(1, CancellationToken.None);
 
         // Assert
-        var okResult = Assert.IsType<OkObjectResult>(result.Result);
+        var okResult = Assert.IsType<OkObjectResult>(result);
         var actualResponse = Assert.IsAssignableFrom<ServiceResponse<GetEmployeeDto>>(okResult.Value);
         actualResponse.Status.Should().BeTrue();
         actualResponse.Value.EmployeeName.Should().Be("John Doe");

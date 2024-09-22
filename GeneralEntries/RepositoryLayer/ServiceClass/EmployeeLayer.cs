@@ -31,9 +31,10 @@ public class EmployeeLayer : IEmployeeLayer
         {
             var result = await _dbContextClass.Employees
                                               .Include(x => x.ApplicationUser)
+                                              .AsNoTracking()
                                               .IgnoreQueryFilters()
-                                           //   .AsNoTracking()
-                                              .AsSplitQuery()
+                                             // .AsQueryable()
+                                              //.AsSplitQuery()
                                               .ToListAsync(cancellationToken);
 
             if (result.Any())

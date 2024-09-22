@@ -24,7 +24,7 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<GetEmployeeDto>>> GetEmployees(CancellationToken cancellationToken)
+        public async Task<ActionResult> GetEmployees(CancellationToken cancellationToken)
         {
 
             var result = await _employeeLayer.GetListAsync(cancellationToken);
@@ -42,7 +42,7 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<GetEmployeeDto>> AddEmployee([FromBody] CreateEmployeeDto model, CancellationToken cancellationToken)
+        public async Task<ActionResult> AddEmployee([FromBody] CreateEmployeeDto model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -69,7 +69,7 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<GetEmployeeDto>> UpdateEmployee([FromBody] CreateEmployeeDto model, CancellationToken cancellationToken)
+        public async Task<ActionResult> UpdateEmployee([FromBody] CreateEmployeeDto model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
             {
@@ -91,7 +91,7 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<GetEmployeeDto>> GetEmployeeByIdAsync(int Id, CancellationToken cancellationToken)
+        public async Task<ActionResult> GetEmployeeByIdAsync(int Id, CancellationToken cancellationToken)
         {
             if (Id <= 0)
             {
@@ -135,7 +135,7 @@ namespace GeneralEntries.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<GetEmployeeDto>> PatchEmployeeAsync(int Id, string empName, CancellationToken cancellationToken)
+        public async Task<ActionResult> PatchEmployeeAsync(int Id, string empName, CancellationToken cancellationToken)
         {
             if (Id <= 0 || empName is null)
             {

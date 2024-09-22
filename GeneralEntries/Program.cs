@@ -28,33 +28,56 @@ logger.Debug("init main");
 
 try
 {
-  //  logger.Debug("init main");
     var builder = WebApplication.CreateBuilder(args);
 
     ConfigurationManager Configuration = builder.Configuration; // allows both to access and to set up the config
     IWebHostEnvironment env = builder.Environment;
 
-    var logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs", "applogs-.txt");
+    //var logFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs", "applogs-.txt");
 
-    Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Debug() // Set minimum log level to Debug
-        .Enrich.FromLogContext() // Enrich logs with more context
-        .WriteTo.Console() // Log to console
-        .WriteTo.File(new JsonFormatter(),
-                      logFilePath,
-                      rollingInterval: RollingInterval.Day, // Roll logs daily
-                      retainedFileCountLimit: 7, // Keep logs for the last 7 days
-                      fileSizeLimitBytes: 10 * 1024 * 1024, // Optional: Max size of each file (10MB)
-                      shared: true) // Allow sharing between multiple processes
-        .CreateLogger();
+    //Log.Logger = new LoggerConfiguration()
+    //    .MinimumLevel.Information() // Use Information level for production
+    //    .Enrich.FromLogContext()
+    //    .WriteTo.Console()
+    //    .WriteTo.File(new JsonFormatter(),
+    //                  logFilePath,
+    //                  rollingInterval: RollingInterval.Day,
+    //                  retainedFileCountLimit: 7,
+    //                  fileSizeLimitBytes: 10 * 1024 * 1024,
+    //                  shared: true)
+    //    .CreateLogger();
 
-    builder.Services.AddHttpContextAccessor();
-    builder.Services.AddHttpClient();
+    Log.Information("Application starting...");
+
+    builder.Host.SerilogConfiguration();
+
+    builder.Services.AddDbContext<DbContextClass>(options =>
+    {
+        options.UseSqlServer(builder.Configuration.GetConnectionString("NewConnection"),
+        sqlServerOptionsAction: sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(5, TimeSpan.FromSeconds(10), null);
+        });
+    });
+
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.Configuration = builder.Configuration.GetSection("RedisConnection").GetValue<string>("LocalHost");
+        options.InstanceName = builder.Configuration.GetSection("RedisConnection").GetValue<string>("InstanceName");
+    });
+
+    builder.Services.AddScoped<IAuthLayer, AuthLayer>(); // If stateless, use Singleton
+    builder.Services.AddScoped<IEmployeeLayer, EmployeeLayer>(); // Same here if stateless
+    builder.Services.AddScoped<ICompanyLayer, CompanyLayer>();
+
     builder.Services.AddResponseCaching();
+    builder.Services.AddHttpClient();
+    builder.Services.AddHttpContextAccessor();
 
     builder.Services.AddControllers(options =>
     {
-        options.Filters.Add(typeof(ExceptionFilterGlobally));
+        //options.Filters.Add(typeof(ExceptionFilterGlobally));
+        options.Filters.Add<ExceptionFilterGlobally>(); // Use generic type
 
     }).AddJsonOptions(options =>
     {
@@ -62,30 +85,12 @@ try
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
-    builder.Services.AddDbContext<DbContextClass>(options =>
-    {
-        options.UseSqlServer(builder.Configuration.GetConnectionString("NewConnection"),
-        sqlServerOptionsAction: sqlOptions =>
-        {
-            sqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 5,
-                maxRetryDelay: TimeSpan.FromSeconds(10),
-                errorNumbersToAdd: null);
-        });
-    });
-
-    builder.Services.AddStackExchangeRedisCache(options =>
-    {
-        options.Configuration = Configuration.GetSection("RedisConnection").GetValue<string>("LocalHost");
-        options.Configuration = Configuration.GetSection("RedisConnection").GetValue<string>("InstanceName");
-    });
-
-    builder.Services.AddHangfire((sp, config) =>
-    {
-        var connectionString = sp.GetRequiredService<IConfiguration>().GetConnectionString("NewConnection");
-        config.UseSqlServerStorage(connectionString);
-    });
-    builder.Services.AddHangfireServer();
+    //builder.Services.AddHangfire((sp, config) =>
+    //{
+    //    var connectionString = sp.GetRequiredService<IConfiguration>().GetConnectionString("NewConnection");
+    //    config.UseSqlServerStorage(connectionString);
+    //});
+    //builder.Services.AddHangfireServer();
 
     builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(Assembly.GetExecutingAssembly()));
 
@@ -102,10 +107,6 @@ try
     }).AddRoles<IdentityRole>()
                     .AddEntityFrameworkStores<DbContextClass>()
                     .AddDefaultTokenProviders();
-
-    builder.Services.AddScoped<IAuthLayer, AuthLayer>();
-    builder.Services.AddScoped<IEmployeeLayer, EmployeeLayer>();
-    builder.Services.AddScoped<ICompanyLayer, CompanyLayer>();
 
     builder.Services.AddTransient<GlobalExceptionHandler>();
 
@@ -209,42 +210,32 @@ try
         app.UseSwaggerUI();
     }
 
-    app.UseRateLimiter();
-
-    app.Logger.LogInformation("Adding Swagger...");
-
-    app.ConfigureExceptionHandler(logger);
-
     app.UseHttpsRedirection();
-
-    app.UseCors("AllowApi");
-
     app.UseResponseCaching();
-
+    app.UseCors("AllowApi");
+    app.ConfigureExceptionHandler(logger);
     app.UseRouting();
-
     app.UseAuthentication();
-
     app.UseAuthorization();
-
+    app.UseRateLimiter();
     app.UseMiddleware<GlobalExceptionHandler>();
 
     app.MapControllers();
 
-    app.UseHangfireDashboard("/test/job-dashboard", new DashboardOptions
-    {
-        DashboardTitle = "Hangfire Job Demo Application",
-        DarkModeEnabled = false,
-        DisplayStorageConnectionString = false,
-        Authorization = new[]
-    {
-        new HangfireCustomBasicAuthenticationFilter
-        {
-            User = "admin",
-            Pass = "admin123"
-        }
-    }
-    });
+    //app.UseHangfireDashboard("/test/job-dashboard", new DashboardOptions
+    //{
+    //    DashboardTitle = "Hangfire Job Demo Application",
+    //    DarkModeEnabled = false,
+    //    DisplayStorageConnectionString = false,
+    //    Authorization = new[]
+    //{
+    //    new HangfireCustomBasicAuthenticationFilter
+    //    {
+    //        User = "admin",
+    //        Pass = "admin123"
+    //    }
+    //}
+    //});
 
     app.Run();
 
@@ -252,7 +243,7 @@ try
 catch (Exception exception)
 {
     // NLog: catch setup errors
-    logger.Error(exception, "Stopped program because of exception");
+    logger.Error(exception.Message, $"Stopped program because of exception - {DateTime.Now}");
     throw;
 }
 finally
