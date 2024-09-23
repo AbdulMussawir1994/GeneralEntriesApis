@@ -6,8 +6,6 @@ using GeneralEntries.Models;
 using GeneralEntries.RepositoryLayer.InterfaceClass;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
 
 namespace GeneralEntries.RepositoryLayer.ServiceClass
 {
@@ -17,14 +15,12 @@ namespace GeneralEntries.RepositoryLayer.ServiceClass
         private readonly IConfiguration _configuration;
         private readonly ILogger<EmployeeLayer> _logger;
         private readonly DbContextClass _dbContextClass;
-        private readonly IDistributedCache _distributedCache;
 
-        public CompanyLayer(IConfiguration configuration, ILogger<EmployeeLayer> logger, DbContextClass dbContextClass, IDistributedCache distributedCache)
+        public CompanyLayer(IConfiguration configuration, ILogger<EmployeeLayer> logger, DbContextClass dbContextClass)
         {
             _configuration = configuration;
             _logger = logger;
             _dbContextClass = dbContextClass;
-            _distributedCache = distributedCache;
         }
 
         public async Task<ServiceResponse<IEnumerable<GetCompanyDto>>> GetCompaniesList(CancellationToken cancellationToken)
@@ -33,46 +29,32 @@ namespace GeneralEntries.RepositoryLayer.ServiceClass
 
             try
             {
-                _logger.LogInformation("Fetching companies...");
+                _logger.LogInformation("Fetching company data from the database...");
 
                 var result = await _dbContextClass.Companies
-                                                     .Include(x => x.Employee)
-                                                     .IgnoreQueryFilters()
-                                                     .AsNoTracking()
-                                                     .ToListAsync(cancellationToken);
-
-
-                ////Redis Working
-
-                //var tomorrow = DateTime.Now.Date.AddDays(1);
-                //var totalSeconds = tomorrow.Subtract(DateTime.Now).TotalSeconds;
-
-                //var distributedCache = new DistributedCacheEntryOptions();
-                //distributedCache.AbsoluteExpirationRelativeToNow = TimeSpan.FromSeconds(totalSeconds);
-                //distributedCache.SlidingExpiration = null;
-
-                //var jsonData = JsonConvert.SerializeObject(empData);
-                //await _distributedCache.SetStringAsync("DashboardData", jsonData, distributedCache);
-
-                ////End
+                                                                 .Include(x => x.Employee)
+                                                                 .AsNoTracking()
+                                                                 .IgnoreQueryFilters()
+                                                                 .AsSplitQuery()
+                                                                 .ToListAsync(cancellationToken);
 
                 serviceResponse.Value = result.Adapt<IEnumerable<GetCompanyDto>>();
                 serviceResponse.Status = true;
                 serviceResponse.Message = result.Any()
-                         ? $"Fetched {result.Count} company records successfully."
-                        : "No company records found.";
+                    ? $"Fetched {result.Count} company records successfully."
+                    : "No company records found.";
             }
             catch (OperationCanceledException)
             {
-                _logger.LogWarning("Operation canceled by the client.");
+                _logger.LogWarning("Operation was canceled while fetching companies.");
                 serviceResponse.Status = false;
                 serviceResponse.Message = "Request was canceled.";
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while fetching company data.");
                 serviceResponse.Status = false;
                 serviceResponse.Message = $"An error occurred: {ex.Message}";
-                _logger.LogError("GetCompanies Error: " + ex.Message);
             }
 
             return serviceResponse;
@@ -84,17 +66,16 @@ namespace GeneralEntries.RepositoryLayer.ServiceClass
 
             try
             {
-                var newEmployee = model.Adapt<Company>(); // Assuming Mapster or other mapper
+                var newCompany = model.Adapt<Company>();
 
-                _dbContextClass.Companies.Add(newEmployee);
-
+                _dbContextClass.Companies.Add(newCompany);
                 var result = await _dbContextClass.SaveChangesAsync(cancellationToken);
 
                 if (result > 0)
                 {
                     serviceResponse.Status = true;
                     serviceResponse.Message = "Company added successfully.";
-                    serviceResponse.Value = newEmployee.Adapt<GetCompanyDto>();
+                    serviceResponse.Value = newCompany.Adapt<GetCompanyDto>();
                 }
                 else
                 {
@@ -104,7 +85,7 @@ namespace GeneralEntries.RepositoryLayer.ServiceClass
             }
             catch (Exception ex)
             {
-                _logger.LogError("AddCompany Error: " + ex.Message);
+                _logger.LogError(ex, "An error occurred while adding a new company.");
                 serviceResponse.Status = false;
                 serviceResponse.Message = $"An error occurred: {ex.InnerException.Message}";
             }
@@ -118,31 +99,31 @@ namespace GeneralEntries.RepositoryLayer.ServiceClass
 
             try
             {
-                var emp = await _dbContextClass.Companies
-                                               .Include(x => x.Employee)
-                                               .SingleOrDefaultAsync(c => c.CompanyId== model.CompanyId, cancellationToken);
+                var company = await _dbContextClass.Companies
+                                                   .SingleOrDefaultAsync(c => c.CompanyId == model.CompanyId, cancellationToken);
 
-                if (emp == null)
+                if (company is null)
                 {
                     serviceResponse.Status = false;
                     serviceResponse.Message = "Company not found.";
                     return serviceResponse;
                 }
 
-                emp.CompanyName = model.CompanyName;
-                emp.Country = model.Country;
-                emp.City = model.City;
-                emp.Branch = model.Branch;
-                emp.EmployeeId = model.EmployeeId;
+                company.CompanyName = model.CompanyName;
+                company.Country = model.Country;
+                company.City = model.City;
+                company.Branch = model.Branch;
+                company.EmployeeId = model.EmployeeId;
 
                 await _dbContextClass.SaveChangesAsync(cancellationToken);
 
                 serviceResponse.Status = true;
                 serviceResponse.Message = "Company updated successfully.";
-                serviceResponse.Value = emp.Adapt<GetCompanyDto>();
+                serviceResponse.Value = company.Adapt<GetCompanyDto>();
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while updating the company.");
                 serviceResponse.Status = false;
                 serviceResponse.Message = $"An error occurred: {ex.Message}";
             }

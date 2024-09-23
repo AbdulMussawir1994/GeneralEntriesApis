@@ -33,8 +33,7 @@ public class EmployeeLayer : IEmployeeLayer
                                               .Include(x => x.ApplicationUser)
                                               .AsNoTracking()
                                               .IgnoreQueryFilters()
-                                             // .AsQueryable()
-                                              //.AsSplitQuery()
+                                              .AsSplitQuery() // Split query improves performance for large includes
                                               .ToListAsync(cancellationToken);
 
             if (result.Any())
@@ -48,7 +47,6 @@ public class EmployeeLayer : IEmployeeLayer
                 serviceResponse.Message = "No employee records found.";
             }
             serviceResponse.Status = true;
-
         }
         catch (OperationCanceledException)
         {
@@ -72,9 +70,9 @@ public class EmployeeLayer : IEmployeeLayer
 
         try
         {
-            var newEmployee = model.Adapt<Employee>(); // Assuming Mapster or other mapper
+            var newEmployee = model.Adapt<Employee>();
 
-            _dbContextClass.Employees.Add(newEmployee);
+            await _dbContextClass.Employees.AddAsync(newEmployee, cancellationToken); // Use AddAsync for async behavior
 
             var result = await _dbContextClass.SaveChangesAsync(cancellationToken);
 
@@ -106,6 +104,7 @@ public class EmployeeLayer : IEmployeeLayer
         try
         {
             var emp = await _dbContextClass.Employees
+                                           .AsTracking() // Use tracking for updates
                                            .Include(x => x.ApplicationUser)
                                            .SingleOrDefaultAsync(c => c.EmployeeId == model.EmployeeId, cancellationToken);
 
@@ -116,10 +115,7 @@ public class EmployeeLayer : IEmployeeLayer
                 return serviceResponse;
             }
 
-            emp.EmployeeName = model.EmployeeName;
-            emp.Salary = model.Salary;
-            emp.Age = model.Age;
-            emp.ApplicationUserId = model.ApplicationUserId;
+            emp = model.Adapt(emp); // Map updates
 
             await _dbContextClass.SaveChangesAsync(cancellationToken);
 
@@ -143,8 +139,8 @@ public class EmployeeLayer : IEmployeeLayer
         try
         {
             var emp = await _dbContextClass.Employees
-                                           .Include(x => x.ApplicationUser)
                                            .AsNoTracking()
+                                           .Include(x => x.ApplicationUser)
                                            .SingleOrDefaultAsync(x => x.EmployeeId == Id, cancellationToken);
 
             if (emp == null)
@@ -193,7 +189,7 @@ public class EmployeeLayer : IEmployeeLayer
         {
             serviceResponse.Status = false;
             serviceResponse.Message = $"An error occurred: {ex.Message}";
-            _logger.LogError("Delete Employee from Employee Layer Error Occur : Message: " + ex.Message);
+            _logger.LogError(ex, "Delete Employee from Employee Layer Error Occurred");
         }
 
         return serviceResponse;
@@ -206,6 +202,7 @@ public class EmployeeLayer : IEmployeeLayer
         try
         {
             var emp = await _dbContextClass.Employees
+                                          .AsTracking()
                                           .Include(x => x.ApplicationUser)
                                           .SingleOrDefaultAsync(c => c.EmployeeId == Id, cancellationToken);
 

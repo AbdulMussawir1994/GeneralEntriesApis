@@ -12,6 +12,7 @@ using GeneralEntries.Helpers.Response;
 using Microsoft.AspNetCore.Mvc;
 using GeneralEntries.Controllers;
 using FluentAssertions;
+using Microsoft.Extensions.Caching.Distributed;
 
 public class EmployeeTesting
 {
@@ -23,6 +24,7 @@ public class EmployeeTesting
     private readonly DbContextClass _dbContext;
     private readonly EmployeesController _controller;
     private readonly Mock<IEmployeeLayer> _mockEmployeeLayer;
+    private readonly Mock<IDistributedCache> _mockIDistributedCache;
 
     private readonly List<Employee> _employeeSeedData;
 
@@ -37,8 +39,9 @@ public class EmployeeTesting
         _mockLoggerController = new Mock<ILogger<EmployeesController>>();
         _mockIconfiguration = new Mock<IConfiguration>();
         _mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+        _mockIDistributedCache = new Mock<IDistributedCache>();
         _mockEmployeeLayer = new Mock<IEmployeeLayer>();
-        _controller = new EmployeesController(_mockEmployeeLayer.Object, _mockLoggerController.Object);
+        _controller = new EmployeesController(_mockEmployeeLayer.Object, _mockLoggerController.Object, _mockIDistributedCache.Object);
 
         _employeeService = new EmployeeLayer(_mockIconfiguration.Object, _mockLogger.Object, _dbContext);
 
@@ -215,7 +218,7 @@ public class EmployeeTesting
         var result = await _controller.AddEmployee(createEmployeeDto, CancellationToken.None);
 
         // Assert
-        var okResult = result as OkObjectResult;
+        var okResult = result.Result as OkObjectResult;
         okResult.Should().NotBeNull(); // Ensure the result is not null
         okResult!.StatusCode.Should().Be(StatusCodes.Status200OK); // Assert the status code is 200 OK
 
@@ -287,7 +290,7 @@ public class EmployeeTesting
             .ReturnsAsync(serviceResponse);
 
         // Act
-        var result = await _controller.DeleteStudentAsync(1, CancellationToken.None);
+        var result = await _controller.DeleteEmployeeAsync(1, CancellationToken.None);
 
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result.Result);
