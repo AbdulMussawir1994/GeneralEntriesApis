@@ -1,15 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Net;
 
 namespace GeneralEntries.Global;
 
 public class GlobalExceptionHandler : IMiddleware
 {
-    private ILogger<GlobalExceptionHandler> _logger;
+    private readonly ILogger<GlobalExceptionHandler> _logger;
+    private readonly IWebHostEnvironment _env;
 
-    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger)
+    public GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IWebHostEnvironment env)
     {
         _logger = logger;
+        _env = env;
     }
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
@@ -24,23 +27,22 @@ public class GlobalExceptionHandler : IMiddleware
         }
     }
 
-    private const string JsonContentType = "application/json";
-    private const int InternalServerErrorStatusCode = (int)HttpStatusCode.InternalServerError;
-
-    private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        string message = ex.Message.ToString();
-        context.Response.ContentType = JsonContentType;
-        context.Response.StatusCode = InternalServerErrorStatusCode;
-
-        _logger.LogError($"Exception Details {message}");
-
-        var response = new Error()
+        var statusCode = (int)HttpStatusCode.InternalServerError;
+        var problemDetails = new ProblemDetails
         {
-            StatusCode = context.Response.StatusCode,
-            Message = message
+            Status = statusCode,
+            Type = "https://httpstatuses.com/500",
+            Title = "An unexpected error occurred!",
+            Detail = _env.IsDevelopment() ? exception.StackTrace : "An internal server error occurred. Please contact support."
         };
 
-        await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = statusCode;
+
+        _logger.LogError(exception, "Unhandled exception occurred");
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
     }
 }

@@ -267,5 +267,25 @@ namespace GeneralEntries.Controllers
             }
         }
 
+        [HttpGet("RedisRefreshed")]
+        public async Task<IActionResult> RefreshCache()
+        {
+            var serviceResponse = new ServiceResponse<bool>();
+
+            serviceResponse.Status = true;
+            serviceResponse.Message = "Redis has been refreshed";
+            try
+            {
+                await _distributedCache.RefreshAsync(RedisCacheKey);
+            }
+            catch (Exception ex)
+            {
+                serviceResponse.Status = false;
+                serviceResponse.Message = ex.Message;
+            }
+
+            return Ok(serviceResponse);
+        }
+
     }
 }

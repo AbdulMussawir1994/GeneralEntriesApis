@@ -22,6 +22,7 @@ using Hangfire;
 using HangfireBasicAuthenticationFilter;
 using Serilog;
 using Serilog.Formatting.Json;
+using System.Text.Json;
 
 var logger = LogManager.Setup().LoadConfigurationFromAppSettings().GetCurrentClassLogger();
 logger.Debug("init main");
@@ -83,6 +84,8 @@ try
     {
         options.JsonSerializerOptions.WriteIndented = true;
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        options.JsonSerializerOptions.IgnoreReadOnlyFields = true;
     });
 
     //builder.Services.AddHangfire((sp, config) =>
