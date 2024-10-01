@@ -1,8 +1,6 @@
 ﻿using GeneralEntries.DTOs;
-using GeneralEntries.DTOs.CompaniesDto;
 using GeneralEntries.Helpers.Response;
 using GeneralEntries.RepositoryLayer.InterfaceClass;
-using GeneralEntries.RepositoryLayer.ServiceClass;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
@@ -29,11 +27,10 @@ namespace GeneralEntries.Controllers
         [HttpGet("List")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ServiceResponse<IEnumerable<GetEmployeeDto>>>> GetEmployees(CancellationToken cancellationToken)
         {
-            _logger.LogInformation("Fetching employee list...");
+
             var serviceResponse = new ServiceResponse<IEnumerable<GetEmployeeDto>>();
 
             try
@@ -56,16 +53,15 @@ namespace GeneralEntries.Controllers
                     var serializedResult = JsonConvert.SerializeObject(result.Value);
                     var cacheOptions = new DistributedCacheEntryOptions
                     {
-                        SlidingExpiration = TimeSpan.FromMinutes(20),
+                        SlidingExpiration = TimeSpan.FromMinutes(1),
                         AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(6)
                     };
                     await _distributedCache.SetStringAsync(RedisCacheKey, serializedResult, cacheOptions, cancellationToken);
 
                     return Ok(result);
                 }
-
-                _logger.LogWarning("Employees list retrieval failed: {Message}", result.Message);
                 return BadRequest(result);
+
             }
             catch (OperationCanceledException)
             {
@@ -82,7 +78,7 @@ namespace GeneralEntries.Controllers
         [HttpPost("Add")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ServiceResponse<GetEmployeeDto>>> AddEmployee([FromBody] CreateEmployeeDto model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -119,7 +115,7 @@ namespace GeneralEntries.Controllers
         [HttpPut("Update")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ServiceResponse<GetEmployeeDto>>> UpdateEmployee([FromBody] CreateEmployeeDto model, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -155,14 +151,13 @@ namespace GeneralEntries.Controllers
 
         [HttpGet("GetEmployeeById/{Id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ServiceResponse<GetEmployeeDto>>> GetEmployeeByIdAsync(int Id, CancellationToken cancellationToken)
         {
             if (Id <= 0)
             {
-                _logger.LogWarning("Invalid Id provided: {Id}", Id);
                 return BadRequest(ApiMessages.InvalidInput);
             }
 
@@ -176,7 +171,6 @@ namespace GeneralEntries.Controllers
                     return NotFound(response);
                 }
 
-                _logger.LogInformation("Employee fetched successfully for Id = {Id}", Id);
                 return Ok(response);
             }
             catch (OperationCanceledException)
@@ -193,9 +187,9 @@ namespace GeneralEntries.Controllers
 
         [HttpDelete("DeleteId/{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<ServiceResponse<bool>>> DeleteEmployeeAsync(int id, CancellationToken cancellationToken)
         {
             if (id <= 0)
@@ -238,7 +232,6 @@ namespace GeneralEntries.Controllers
         {
             if (Id <= 0 || string.IsNullOrWhiteSpace(empName))
             {
-                _logger.LogWarning("Invalid input: Id = {Id}, empName = {EmpName}", Id, empName);
                 return BadRequest(ApiMessages.InvalidInput);
             }
 
@@ -252,7 +245,6 @@ namespace GeneralEntries.Controllers
                     return BadRequest(response);
                 }
 
-                _logger.LogInformation("PatchEmployeeAsync successful for Id = {Id}", Id);
                 return Ok(response);
             }
             catch (OperationCanceledException)
@@ -272,11 +264,11 @@ namespace GeneralEntries.Controllers
         {
             var serviceResponse = new ServiceResponse<bool>();
 
-            serviceResponse.Status = true;
-            serviceResponse.Message = "Redis has been refreshed";
             try
             {
                 await _distributedCache.RefreshAsync(RedisCacheKey);
+                serviceResponse.Status = true;
+                serviceResponse.Message = "Redis has been refreshed";
             }
             catch (Exception ex)
             {

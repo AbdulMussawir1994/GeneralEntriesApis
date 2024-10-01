@@ -25,40 +25,51 @@ public class EmployeeLayer : IEmployeeLayer
 
     public async Task<ServiceResponse<IEnumerable<GetEmployeeDto>>> GetListAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("GetListAsync EmployeeLayer is Calling");
+
         var serviceResponse = new ServiceResponse<IEnumerable<GetEmployeeDto>>();
+
         try
         {
-            var result = await _dbContextClass.Employees
-                                              .Include(x => x.ApplicationUser)
-                                              .AsNoTracking()
-                                              .IgnoreQueryFilters()
-                                              .AsSplitQuery() // Split query improves performance for large includes
-                                              .ToListAsync(cancellationToken);
+            var employees = await _dbContextClass.Employees
+                                                 .Include(e => e.ApplicationUser)
+                                                 .AsNoTracking()
+                                                 .AsSplitQuery()
+                                                 .ToListAsync(cancellationToken);
 
-            if (result.Any())
+            //var res = await _dbContextClass.Employees
+            //    .GroupBy(e => e.Age)
+            //    .Select(group => new
+            //    {
+            //        Age = group.Key,               // Age is the group key
+            //        EmployeesCount = group.Count()  // Count the number of employees in each age group
+            //    })
+            //    .ToListAsync();
+
+            //var result = await _dbContextClass.Employees
+            //                                .Include(x => x.ApplicationUser)
+            //                                .AsNoTracking()
+            //                                .IgnoreQueryFilters()
+            //                                .AsSplitQuery() // Split query improves performance for large includes
+            //                                .ToListAsync(cancellationToken);
+
+            if (employees.Any())
             {
-                serviceResponse.Value = result.Adapt<IEnumerable<GetEmployeeDto>>();
-                serviceResponse.Message = "Fetched all employee records successfully.";
+                serviceResponse.Value = employees.Adapt<IEnumerable<GetEmployeeDto>>();
+                serviceResponse.Status = true;
+                serviceResponse.Message = "Employee list fetched successfully.";
             }
             else
             {
                 serviceResponse.Value = Enumerable.Empty<GetEmployeeDto>();
-                serviceResponse.Message = "No employee records found.";
+                serviceResponse.Status = false;
+                serviceResponse.Message = "No employees found.";
             }
-            serviceResponse.Status = true;
-        }
-        catch (OperationCanceledException)
-        {
-            serviceResponse.Status = false;
-            serviceResponse.Message = "The operation was canceled.";
-            _logger.LogWarning("Employee query operation was canceled.");
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "Error fetching employees.");
             serviceResponse.Status = false;
-            serviceResponse.Message = $"An error occurred: {ex.Message}";
-            _logger.LogError(ex, "Error occurred while fetching employee data.");
+            serviceResponse.Message = "An error occurred.";
         }
 
         return serviceResponse;
@@ -108,7 +119,7 @@ public class EmployeeLayer : IEmployeeLayer
                                            .Include(x => x.ApplicationUser)
                                            .SingleOrDefaultAsync(c => c.EmployeeId == model.EmployeeId, cancellationToken);
 
-            if (emp == null)
+            if (emp is null)
             {
                 serviceResponse.Status = false;
                 serviceResponse.Message = "Employee not found.";

@@ -70,6 +70,11 @@ try
     builder.Services.AddScoped<IAuthLayer, AuthLayer>(); // If stateless, use Singleton
     builder.Services.AddScoped<IEmployeeLayer, EmployeeLayer>(); // Same here if stateless
     builder.Services.AddScoped<ICompanyLayer, CompanyLayer>();
+    builder.Services.AddScoped<IMessageProducer, MessageProducer>();
+    builder.Services.AddScoped<IRabbitMqMessageService, RabbitMqMessageService>();
+
+    builder.Services.AddSingleton<RabbitMqService>();
+    builder.Services.AddHostedService<RabbitMqConsumerService>();
 
     builder.Services.AddResponseCaching();
     builder.Services.AddHttpClient();
